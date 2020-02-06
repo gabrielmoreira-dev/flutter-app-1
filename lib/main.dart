@@ -43,6 +43,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _transactions = [];
 
+  List<Transaction> get _recentTransactions{
+    return _transactions.where((transaction){
+      return transaction.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
+  }
+
   void _addTransaction(String title, double amount) {
     print('ok');
     setState(() {
@@ -87,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            ChartCard(),
+            ChartCard(_recentTransactions),
             TransactionList(_transactions),
           ],
         ),
