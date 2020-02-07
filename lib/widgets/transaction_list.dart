@@ -1,5 +1,5 @@
 import 'package:app1_expenses/model/transaction.dart';
-import 'package:app1_expenses/widgets/transaction_card.dart';
+import 'package:app1_expenses/widgets/transaction_item.dart';
 import 'package:flutter/material.dart';
 
 class TransactionList extends StatelessWidget {
@@ -10,6 +10,8 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       height: 450,
       child: _transactions.isEmpty
@@ -17,9 +19,9 @@ class TransactionList extends StatelessWidget {
               children: <Widget>[
                 Text(
                   "No transactions added yet",
-                  style: Theme.of(context).textTheme.display2,
+                  style: theme.textTheme.display2,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 Container(
