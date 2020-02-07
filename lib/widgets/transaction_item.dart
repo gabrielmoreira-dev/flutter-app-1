@@ -10,6 +10,9 @@ class TransactionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final theme = Theme.of(context);
+
     return Card(
       elevation: 5,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
@@ -17,24 +20,24 @@ class TransactionCard extends StatelessWidget {
         leading: CircleAvatar(
           radius: 30,
           child: Padding(
-            padding: EdgeInsets.all(6),
+            padding: const EdgeInsets.all(6),
             child: FittedBox(
               child: Text(
                 'R\$ ${_transaction.amount.toStringAsFixed(2)}',
-                style: Theme.of(context).textTheme.display1,
+                style: theme.textTheme.display1,
               ),
             ),
           ),
         ),
         title: Text(_transaction.title,
-            style: Theme.of(context).textTheme.display2),
+            style: theme.textTheme.display2),
         subtitle: Text(
           DateFormat.yMMMd().format(_transaction.date),
-          style: Theme.of(context).textTheme.display3,
+          style: theme.textTheme.display3,
         ),
         trailing: IconButton(
-          icon: Icon(Icons.delete),
-          color: Theme.of(context).errorColor,
+          icon: const Icon(Icons.delete),
+          color: theme.errorColor,
           onPressed: () => removeTransaction(_transaction.id),
         ),
       ),

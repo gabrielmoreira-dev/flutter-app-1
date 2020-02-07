@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:app1_expenses/model/transaction.dart';
 import 'package:app1_expenses/widgets/add_transaction_card.dart';
 import 'package:app1_expenses/widgets/chat_card.dart';
@@ -85,14 +86,21 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     );
   }
-  
-  void _setSwitchState(bool value){
+
+  void _setSwitchState(bool value) {
     setState(() {
       _switchValue = value;
     });
   }
 
   Widget build(BuildContext context) {
+    final _isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final _transactionList = TransactionList(
+      _transactions,
+      removeTransaction: this._removeTransaction,
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Personal Expenses'),
@@ -111,18 +119,21 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text('Show Chart'),
-                Switch(value: _switchValue, onChanged: (value) => this._setSwitchState(value),),
-              ],
-            ),
-            _switchValue ? ChartCard(_recentTransactions) : SizedBox() ,
-            TransactionList(
-              _transactions,
-              removeTransaction: this._removeTransaction,
-            ),
+            if (_isLandscape)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('Show Chart'),
+                  Switch(
+                    value: _switchValue,
+                    onChanged: (value) => this._setSwitchState(value),
+                  ),
+                ],
+              ),
+            if (_isLandscape)
+              _switchValue ? ChartCard(_recentTransactions) : _transactionList,
+            if (!_isLandscape) ChartCard(_recentTransactions),
+            if (!_isLandscape) _transactionList,
           ],
         ),
       ),
