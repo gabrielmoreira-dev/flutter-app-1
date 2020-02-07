@@ -3,8 +3,10 @@ import 'package:app1_expenses/widgets/add_transaction_card.dart';
 import 'package:app1_expenses/widgets/chat_card.dart';
 import 'package:app1_expenses/widgets/transaction_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
+//  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(MyApp());
 }
 
@@ -15,20 +17,22 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple,
         textTheme: ThemeData.light().textTheme.copyWith(
-            display1: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-              color: Colors.purple,
+              display1: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Colors.white,
+              ),
+              display2: TextStyle(
+                fontSize: 18,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+              display3: TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
+              ),
+              button: TextStyle(color: Colors.white),
             ),
-            display2: TextStyle(
-              fontSize: 18,
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
-            display3: TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            )),
       ),
       home: MyHomePage(),
     );
@@ -42,22 +46,30 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _transactions = [];
+  var _switchValue = true;
 
-  List<Transaction> get _recentTransactions{
-    return _transactions.where((transaction){
-      return transaction.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+  List<Transaction> get _recentTransactions {
+    return _transactions.where((transaction) {
+      return transaction.date
+          .isAfter(DateTime.now().subtract(Duration(days: 7)));
     }).toList();
   }
 
-  void _addTransaction(String title, double amount) {
+  void _addTransaction(String title, double amount, DateTime date) {
     print('ok');
     setState(() {
       _transactions.add(Transaction(
         id: _transactions.length.toString(),
         title: title,
         amount: amount,
-        date: DateTime.now(),
+        date: date,
       ));
+    });
+  }
+
+  void _removeTransaction(String id) {
+    setState(() {
+      _transactions.removeWhere((transaction) => transaction.id == id);
     });
   }
 
@@ -72,6 +84,12 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       },
     );
+  }
+  
+  void _setSwitchState(bool value){
+    setState(() {
+      _switchValue = value;
+    });
   }
 
   Widget build(BuildContext context) {
@@ -93,8 +111,18 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            ChartCard(_recentTransactions),
-            TransactionList(_transactions),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text('Show Chart'),
+                Switch(value: _switchValue, onChanged: (value) => this._setSwitchState(value),),
+              ],
+            ),
+            _switchValue ? ChartCard(_recentTransactions) : SizedBox() ,
+            TransactionList(
+              _transactions,
+              removeTransaction: this._removeTransaction,
+            ),
           ],
         ),
       ),

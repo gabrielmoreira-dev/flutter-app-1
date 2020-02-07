@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AddTransactionCard extends StatefulWidget {
   final Function _addTransaction;
@@ -11,18 +12,34 @@ class AddTransactionCard extends StatefulWidget {
 
 class _AddTransactionCardState extends State<AddTransactionCard> {
   final _titleController = TextEditingController();
-
   final _amountController = TextEditingController();
+  DateTime _selectedDate;
 
   void _submit() {
-    final title = _titleController.text;
-    final amount = double.parse(_amountController.text);
+    final _title = _titleController.text;
+    final _amount = _amountController.text.isEmpty
+        ? 0
+        : double.parse(_amountController.text);
 
-    if (title.isEmpty || amount <= 0) return;
-    widget._addTransaction(title, amount);
+    if (_title.isEmpty || _amount <= 0 || _selectedDate == null) return;
+    widget._addTransaction(_title, _amount, _selectedDate);
     _titleController.clear();
     _amountController.clear();
     Navigator.of(context).pop();
+  }
+
+  void _showDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2019),
+      lastDate: DateTime.now(),
+    ).then((value) {
+      if (value == null) return;
+      setState(() {
+        _selectedDate = value;
+      });
+    });
   }
 
   @override
@@ -45,9 +62,31 @@ class _AddTransactionCardState extends State<AddTransactionCard> {
               keyboardType: TextInputType.number,
               onSubmitted: (_) => _submit(),
             ),
-            FlatButton(
+            Container(
+              height: 70,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    _selectedDate == null
+                        ? 'No Date Chosen'
+                        : 'Date: ${DateFormat.yMd().format(_selectedDate)}',
+                  ),
+                  FlatButton(
+                    textColor: Theme.of(context).primaryColor,
+                    child: Text(
+                      'Choose Date',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: _showDatePicker,
+                  ),
+                ],
+              ),
+            ),
+            RaisedButton(
               child: Text('Add Transaction'),
-              textColor: Colors.purple,
+              color: Theme.of(context).primaryColor,
+              textColor: Theme.of(context).textTheme.button.color,
               onPressed: _submit,
             )
           ],

@@ -1,15 +1,16 @@
 import 'package:app1_expenses/model/transaction.dart';
-import 'package:app1_expenses/widgets/chart-bar.dart';
+import 'package:app1_expenses/widgets/chart_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ChartCard extends StatelessWidget {
   final List<Transaction> _transactions;
+  final numDays = 7;
 
   ChartCard(this._transactions);
 
   List<Map<String, Object>> get transactionValues {
-    return List.generate(7, (index) {
+    return List.generate(numDays, (index) {
       final weekDay = DateTime.now().subtract(
         Duration(days: index),
       );
@@ -25,7 +26,7 @@ class ChartCard extends StatelessWidget {
         'day': DateFormat.E().format(weekDay).substring(0, 1),
         'amount': totalSum,
       };
-    });
+    }).reversed.toList();
   }
 
   double get totalSpeding {
