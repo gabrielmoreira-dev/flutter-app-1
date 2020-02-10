@@ -93,6 +93,57 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  List<Widget> _buildLandscapeContent(
+      TransactionList transactionList, double appBarHeight) {
+    final height = MediaQuery.of(context).size.height -
+        appBarHeight -
+        MediaQuery.of(context).padding.top;
+    return [
+      Container(
+        height: height * 0.05,
+        margin: EdgeInsets.all(10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('Show Chart'),
+            Switch(
+              value: _switchValue,
+              onChanged: (value) => this._setSwitchState(value),
+            ),
+          ],
+        ),
+      ),
+      _switchValue
+          ? Container(
+              height: height * 0.7,
+              child: ChartCard(_recentTransactions),
+            )
+          : Container(
+              height: height * 0.7,
+              child: transactionList,
+            )
+    ];
+  }
+
+  List<Widget> _buildPortraitContent(
+    TransactionList transactionList,
+    double appBarHeight,
+  ) {
+    final height = MediaQuery.of(context).size.height -
+        appBarHeight -
+        MediaQuery.of(context).padding.top;
+    return [
+      Container(
+        height: height * 0.3,
+        child: ChartCard(_recentTransactions),
+      ),
+      Container(
+        height: height * 0.7,
+        child: transactionList,
+      ),
+    ];
+  }
+
   Widget build(BuildContext context) {
     final _isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
@@ -100,40 +151,36 @@ class _MyHomePageState extends State<MyHomePage> {
       _transactions,
       removeTransaction: this._removeTransaction,
     );
+    final _appBar = AppBar(
+      title: Text('Personal Expenses'),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          onPressed: () => _startAddTransaction(context),
+        ),
+      ],
+    );
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Personal Expenses'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.add,
-              color: Colors.white,
-            ),
-            onPressed: () => _startAddTransaction(context),
-          ),
-        ],
-      ),
+      appBar: _appBar,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             if (_isLandscape)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('Show Chart'),
-                  Switch(
-                    value: _switchValue,
-                    onChanged: (value) => this._setSwitchState(value),
-                  ),
-                ],
+              ..._buildLandscapeContent(
+                _transactionList,
+                _appBar.preferredSize.height,
               ),
-            if (_isLandscape)
-              _switchValue ? ChartCard(_recentTransactions) : _transactionList,
-            if (!_isLandscape) ChartCard(_recentTransactions),
-            if (!_isLandscape) _transactionList,
+            if (!_isLandscape)
+              ..._buildPortraitContent(
+                _transactionList,
+                _appBar.preferredSize.height,
+              )
           ],
         ),
       ),

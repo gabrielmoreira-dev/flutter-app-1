@@ -12,32 +12,32 @@ class TransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
-      height: 450,
-      child: _transactions.isEmpty
-          ? Column(
-              children: <Widget>[
-                Text(
-                  "No transactions added yet",
-                  style: theme.textTheme.display2,
+    return _transactions.isEmpty
+        ? Column(
+            children: <Widget>[
+              Text(
+                "No transactions added yet",
+                style: theme.textTheme.display2,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                height: 200,
+                child: Image.asset(
+                  'assets/img/waiting.png',
+                  fit: BoxFit.cover,
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  height: 200,
-                  child: Image.asset(
-                    'assets/img/waiting.png',
-                    fit: BoxFit.cover,
-                  ),
-                )
-              ],
-            )
-          : ListView.builder(
-              itemBuilder: (context, index) =>
-                  TransactionCard(_transactions[index], removeTransaction: removeTransaction,),
-              itemCount: _transactions.length,
+              )
+            ],
+          )
+        : ListView.builder(
+            itemBuilder: (context, index) => TransactionCard(
+              key: ValueKey(_transactions[index].id),
+              transaction: _transactions[index],
+              removeTransaction: removeTransaction,
             ),
-    );
+            itemCount: _transactions.length,
+          );
   }
 }
