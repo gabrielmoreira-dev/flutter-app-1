@@ -3,14 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class TransactionCard extends StatelessWidget {
-  final Transaction _transaction;
+  final Key key;
+  final Transaction transaction;
   final Function removeTransaction;
 
-  TransactionCard(this._transaction, {@required this.removeTransaction});
+  TransactionCard({
+    this.key,
+    @required this.transaction,
+    @required this.removeTransaction,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
     final theme = Theme.of(context);
 
     return Card(
@@ -23,25 +27,23 @@ class TransactionCard extends StatelessWidget {
             padding: const EdgeInsets.all(6),
             child: FittedBox(
               child: Text(
-                'R\$ ${_transaction.amount.toStringAsFixed(2)}',
+                'R\$ ${transaction.amount.toStringAsFixed(2)}',
                 style: theme.textTheme.display1,
               ),
             ),
           ),
         ),
-        title: Text(_transaction.title,
-            style: theme.textTheme.display2),
+        title: Text(transaction.title, style: theme.textTheme.display2),
         subtitle: Text(
-          DateFormat.yMMMd().format(_transaction.date),
+          DateFormat.yMMMd().format(transaction.date),
           style: theme.textTheme.display3,
         ),
         trailing: IconButton(
           icon: const Icon(Icons.delete),
           color: theme.errorColor,
-          onPressed: () => removeTransaction(_transaction.id),
+          onPressed: () => removeTransaction(transaction.id),
         ),
       ),
     );
-
   }
 }
